@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+
+DIR="$HOME/Pictures/Screenshots"
+mkdir -p "$DIR"
+
+capture() {
+    FILE="$DIR/$(date +'%Y-%m-%d_%H-%M-%S').png"
+
+    if ! grim "$@" "$FILE"; then
+        notify-send "Screenshot" "Chụp ảnh thất bại"
+        return 1
+    fi
+
+    if wl-copy --type image/png < "$FILE"; then
+        notify-send "Screenshot" "Đã lưu và copy ảnh PNG!"
+    else
+        notify-send "Screenshot" "Lưu ảnh được nhưng copy thất bại"
+    fi
+}
+
+case "$1" in
+    double)
+        STATE="/tmp/hypr-print-last"
+        NOW=$(date +%s%3N)
+
+        if [[ -f "$STATE" ]]; then
+            LAST=$(cat "$STATE")
+            DIFF=$((NOW - LAST))
+        else
+            DIFF=9999
+        fi
+
+        if (( DIFF <= 650 )); then
+            rm -f "$STATE"
+            MONITOR=$(hyprctl monitors -j | jq -r '.[] | select(.focused) | .name')
+            capture -o "$MONITOR"
+        else
+            echo "$NOW" > "$STATE"
+            notify-send -t 800 "Screenshot" "Nhấn Print lần nữa để chụp"
+        fi
+        ;;
+
+    region)
+        GEOMETRY=$(slurp) || exit 0
+        capture -g "$GEOMETRY"
+        ;;
+
+    window)
+        GEOMETRY=$(hyprctl -j activewindow | jq -r '"\(.at[0]),\(.at[1]) \(.size[0])x\(.size[1])"')
+        capture -g "$GEOMETRY"
+        ;;
+esac

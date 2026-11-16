@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+WALLPAPER_DIR="$HOME/Pictures/Wallpapers"
+INTERVAL=300
+
+while true; do
+    mapfile -t IMAGES < <(
+        find "$WALLPAPER_DIR" -type f \
+        \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.webp' \)
+    )
+
+    if [ ${#IMAGES[@]} -gt 0 ]; then
+        IMAGE="${IMAGES[RANDOM % ${#IMAGES[@]}]}"
+        swaybg -i "$IMAGE" -m fill &
+        BG_PID=$!
+        sleep "$INTERVAL"
+        kill "$BG_PID" 2>/dev/null
+    else
+        sleep 10
+    fi
+done

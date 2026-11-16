@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+FLAVOR=$(printf '%s\n' \
+    latte \
+    frappe \
+    macchiato \
+    mocha |
+    rofi -dmenu -i -p "Catppuccin Flavor")
+
+[ -z "$FLAVOR" ] && exit 0
+
+kitty "$HOME/.local/bin/catppuccin-switch" "$FLAVOR"

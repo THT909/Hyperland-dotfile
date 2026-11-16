@@ -1,0 +1,105 @@
+
+{
+    "layer": "top",
+    "position": "top",
+    "height": 38,
+    "spacing": 8,
+    "margin-top": 4,
+    "margin-left": 8,
+    "margin-right": 8,
+
+    "modules-left": [
+        "hyprland/workspaces",
+        "hyprland/window"
+    ],
+
+    "modules-center": [
+        "clock"
+    ],
+
+    "modules-right": [
+        "network",
+        "pulseaudio",
+        "backlight",
+        "battery",
+        "cpu",
+        "memory",
+        "tray"
+    ],
+
+    "hyprland/workspaces": {
+        "format": "{icon}",
+        "format-icons": {
+            "active": "",
+            "default": "",
+            "empty": ""
+        },
+        "persistent-workspaces": {
+            "*": 5
+        },
+        "on-click": "activate"
+    },
+
+    "hyprland/window": {
+        "format": "{}",
+        "max-length": 35,
+        "separate-outputs": true
+    },
+
+    "clock": {
+        "format": "  {:%H:%M    %d/%m/%Y}",
+        "tooltip": true,
+        "on-click": "gnome-calendar"
+    },
+
+    "network": {
+        "format-wifi": "  {essid}",
+        "format-ethernet": "󰈀  Ethernet",
+        "format-disconnected": "󰖪  Offline",
+        "tooltip-format": "{ifname}: {ipaddr}\nSignal: {signalStrength}%",
+        "on-click": "nm-connection-editor",
+        "interval": 5
+    },
+
+    "pulseaudio": {
+        "format": "  {volume}%",
+        "format-muted": "󰝟  Muted",
+        "format-bluetooth": "󰂯  {volume}%",
+        "format-bluetooth-muted": "󰂲  Muted",
+        "tooltip": true,
+        "scroll-step": 5,
+        "on-click": "pavucontrol",
+        "on-click-right": "pavucontrol"
+    },
+
+    "backlight": {
+        "format": "󰃠  {percent}%",
+        "device": "amdgpu_bl0",
+        "scroll-step": 5
+    },
+
+    "battery": {
+        "format": "  {capacity}%",
+        "format-charging": "  {capacity}%",
+        "format-full": "  Full",
+        "tooltip": true,
+        "interval": 10
+    },
+
+    "cpu": {
+        "format": "  {usage}%",
+        "interval": 5,
+        "tooltip": true
+    },
+
+    "memory": {
+        "format": "  {percentage}%",
+        "interval": 5,
+        "tooltip": true
+    },
+
+    "tray": {
+        "icon-size": 16,
+        "spacing": 8
+    }
+}

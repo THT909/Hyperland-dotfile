@@ -1,0 +1,144 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+FLAVOR="${1:-}"
+ACCENT="mauve"
+
+case "$FLAVOR" in
+  latte|frappe|macchiato|mocha) ;;
+  *)
+    echo "Usage: catppuccin-switch {latte|frappe|macchiato|mocha}"
+    exit 1
+    ;;
+esac
+
+ROOT="$HOME/.config"
+BACKUP="$HOME/catppuccin-backup"
+GTK_INSTALLER="/tmp/catppuccin-gtk/install.py"
+PAPIRUS="$HOME/.local/bin/papirus-folders"
+
+mkdir -p "$BACKUP"
+
+# Backup existing configuration files once.
+for f in \
+  hypr/themes/catppuccin-mocha.lua \
+  waybar/themes/mocha.css \
+  rofi/themes/catppuccin-mocha.rasi \
+  kitty/mocha.conf \
+  kitty/kitty.conf
+do
+  if [[ -f "$ROOT/$f" && ! -f "$BACKUP/$f" ]]; then
+    mkdir -p "$BACKUP/$(dirname "$f")"
+    cp -a "$ROOT/$f" "$BACKUP/$f"
+  fi
+done
+
+echo "Downloading official Catppuccin palette..."
+TMP="$(mktemp)"
+trap 'rm -f "$TMP"' EXIT
+
+curl -fsSL \
+  https://raw.githubusercontent.com/catppuccin/palette/main/palette.json \
+  -o "$TMP"
+
+echo "Generating palettes..."
+
+python3 - "$FLAVOR" "$TMP" "$ROOT" <<'PY'
+import json, sys, pathlib
+
+flavor, palette_file, root = sys.argv[1:]
+root = pathlib.Path(root)
+
+with open(palette_file) as f:
+    palette = json.load(f)
+
+colors = palette[flavor]["colors"]
+ansi = palette[flavor]["ansiColors"]
+
+def c(name):
+    return colors[name]["hex"]
+
+# Hyprland Lua
+lua = ["local M = {}"]
+for name, data in colors.items():
+    h = data["hex"].lstrip("#")
+    lua.append(f"M.{name} = 'rgb({h})'")
+    lua.append(f"M.{name}Alpha = '{h}'")
+lua.append("return M")
+
+(root / "hypr/themes/catppuccin-mocha.lua").write_text(
+    "\n".join(lua) + "\n"
+)
+
+# Waybar CSS
+css = []
+for name in colors:
+    css.append(f"@define-color {name} {c(name)};")
+(root / "waybar/themes/mocha.css").write_text("\n".join(css) + "\n")
+
+# Rofi
+rasi = ["* {"]
+for name in colors:
+    rasi.append(f"  {name}: {c(name)};")
+rasi.append("}")
+(root / "rofi/themes/catppuccin-mocha.rasi").write_text(
+    "\n".join(rasi) + "\n"
+)
+
+# Kitty
+kitty = [
+    f"foreground {c('text')}",
+    f"background {c('base')}",
+    f"selection_foreground {c('base')}",
+    f"selection_background {c('rosewater')}",
+    f"cursor {c('rosewater')}",
+    f"cursor_text_color {c('base')}",
+    f"scrollbar_handle_color {c('overlay2')}",
+    f"scrollbar_track_color {c('surface1')}",
+    f"url_color {c('rosewater')}",
+    f"active_border_color {c('lavender')}",
+    f"inactive_border_color {c('overlay0')}",
+    f"bell_border_color {c('yellow')}",
+    "wayland_titlebar_color system",
+    "macos_titlebar_color system",
+    f"active_tab_foreground {c('crust')}",
+    f"active_tab_background {c('mauve')}",
+    f"inactive_tab_foreground {c('text')}",
+    f"inactive_tab_background {c('mantle')}",
+    f"tab_bar_background {c('crust')}",
+]
+
+for i, key in enumerate(
+    ["black", "red", "green", "yellow", "blue", "magenta", "cyan", "white"]
+):
+    kitty.append(f"color{i} {ansi[key]['normal']['hex']}")
+    kitty.append(f"color{i+8} {ansi[key]['bright']['hex']}")
+
+(root / "kitty/mocha.conf").write_text("\n".join(kitty) + "\n")
+PY
+
+# Install matching GTK flavor.
+if [[ -f "$GTK_INSTALLER" ]]; then
+  echo "Installing GTK $FLAVOR..."
+  python3 "$GTK_INSTALLER" "$FLAVOR" "$ACCENT"
+  GTK_NAME="catppuccin-${FLAVOR}-${ACCENT}-standard+default"
+  gsettings set org.gnome.desktop.interface gtk-theme "$GTK_NAME"
+  gsettings set org.gnome.desktop.interface color-scheme prefer-dark
+else
+  echo "WARNING: GTK installer not found; skipping GTK."
+fi
+
+# Change Papirus folder color.
+if [[ -x "$PAPIRUS" ]]; then
+  "$PAPIRUS" -C "cat-${FLAVOR}-${ACCENT}" --theme Papirus-Dark
+fi
+
+# Reload supported applications.
+hyprctl reload 2>/dev/null || true
+pkill -SIGUSR2 waybar 2>/dev/null || true
+
+echo
+echo "Catppuccin switched to: $FLAVOR + $ACCENT"
+echo "Backup: $BACKUP"
+echo "Open a new Kitty window to load its new palette."
+echo "Restart Thunar to apply the GTK theme."

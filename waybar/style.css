@@ -1,0 +1,127 @@
+@import 'themes/mocha.css';
+
+* {
+    font-family: 'JetBrainsMono Nerd Font', sans-serif;
+    font-size: 13px;
+    border: none;
+    min-height: 0;
+}
+
+window#waybar {
+    background: transparent;
+    color: @text;
+}
+
+/* Floating bar groups */
+.modules-left,
+.modules-center,
+.modules-right {
+    background: @base;
+    border: 1px solid alpha(@mauve, 0.25);
+    border-radius: 14px;
+    padding: 3px 6px;
+    margin: 4px 5px;
+}
+
+/* Workspaces */
+#workspaces button {
+    color: @subtext0;
+    background: transparent;
+    padding: 3px 10px;
+    margin: 2px;
+    border-radius: 10px;
+}
+
+#workspaces button.active {
+    color: @base;
+    background: @mauve;
+    border-radius: 10px;
+}
+
+#workspaces button:hover {
+    color: @mauve;
+    background: @surface0;
+}
+
+/* Window title */
+#window {
+    color: @subtext1;
+    padding: 0 10px;
+}
+
+/* Clock */
+#clock {
+    color: @mauve;
+    font-weight: bold;
+}
+
+/* Modules */
+#clock,
+#battery,
+#network,
+#pulseaudio,
+#backlight,
+#cpu,
+#memory,
+#tray {
+    padding: 4px 10px;
+    margin: 2px 3px;
+    border-radius: 10px;
+    background: @surface0;
+}
+
+/* Module colors */
+#network {
+    color: @blue;
+}
+
+#pulseaudio {
+    color: @mauve;
+}
+
+#pulseaudio.muted {
+    color: @overlay0;
+}
+
+#backlight {
+    color: @yellow;
+}
+
+#battery {
+    color: @green;
+}
+
+#battery.warning {
+    color: @yellow;
+}
+
+#battery.critical {
+    color: @red;
+}
+
+#cpu {
+    color: @peach;
+}
+
+#memory {
+    color: @teal;
+}
+
+/* Hover */
+#network:hover,
+#pulseaudio:hover,
+#backlight:hover,
+#battery:hover,
+#cpu:hover,
+#memory:hover {
+    background: @surface1;
+}
+
+/* Tooltip */
+tooltip {
+    background: @mantle;
+    color: @text;
+    border: 1px solid @mauve;
+    border-radius: 10px;
+    padding: 6px;
+}
