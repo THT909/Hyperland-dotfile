@@ -49,7 +49,8 @@
     "clock": {
         "format": "  {:%H:%M    %d/%m/%Y}",
         "tooltip": true,
-        "on-click": "gnome-calendar"
+        "on-click": "gnome-calendar",
+	"on-click-right": "pkill -x gnome-calendar"
     },
 
     "network": {
@@ -58,7 +59,8 @@
         "format-disconnected": "󰖪  Offline",
         "tooltip-format": "{ifname}: {ipaddr}\nSignal: {signalStrength}%",
         "on-click": "nm-connection-editor",
-        "interval": 5
+	"on-click-right": "pkill -f '^nm-connection-editor$'",
+	"interval": 5
     },
 
     "pulseaudio": {
@@ -69,7 +71,7 @@
         "tooltip": true,
         "scroll-step": 5,
         "on-click": "pavucontrol",
-        "on-click-right": "pavucontrol"
+        "on-click-right": "pkill -x pavucontrol"
     },
 
     "backlight": {
