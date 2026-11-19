@@ -1,165 +1,115 @@
-# My Dotfiles
+# My Hyprland Dotfiles
 
-Personal Linux desktop configuration — Ubuntu 24.04 + Hyprland + Catppuccin.
+Personal Linux desktop configuration for Ubuntu, using Hyprland with a Catppuccin theme.
 
-> A personal backup of my Linux desktop environment.
-> Keep this repository updated whenever configurations change.
+This repository stores my desktop configuration files and helper scripts so I can restore my environment after reinstalling Linux.
 
----
+## Desktop Overview
 
-## 1. Desktop Environment
-
-| Component | Software |
+| Component | Application |
 |---|---|
-| OS | Ubuntu 24.04 LTS |
+| Operating System | Ubuntu 24.04 LTS |
 | Window Manager | Hyprland |
-| Display Manager | GDM |
-| Desktop Environment | GNOME |
-| Terminal | Kitty |
-| File Manager | Thunar |
+| Configuration | Lua |
+| Wallpaper Manager | Hyprpaper |
 | Status Bar | Waybar |
 | Application Launcher | Rofi |
-| Wallpaper | swaybg |
-| Input Method | Fcitx5 + Bamboo |
+| Terminal | Kitty |
+| File Manager | Thunar |
+| Audio Settings | Pavucontrol |
+| Network Settings | NetworkManager Editor |
 | Theme | Catppuccin |
-| Icon Theme | Papirus |
+| Screenshot | grim + slurp |
 
-**Important:** Keep GDM and GNOME working. Do not replace GDM with another display manager during restoration.
+GNOME and GDM are retained as the default desktop and login manager.
 
----
-
-## 2. Repository Structure
-
-Expected structure:
+## Repository Structure
 
 ```text
 dotfiles/
-├── README.md
 ├── hypr/
+│   ├── hyprland.conf
+│   ├── hyprland.lua
+│   ├── hyprland.lua.bak
+│   ├── hyprpaper.conf
+│   ├── monitors.conf
+│   ├── workspaces.conf
+│   └── themes/
+│       └── catppuccin-mocha.lua
+│
 ├── waybar/
+│   ├── config.jsonc
+│   ├── config.jsonc.bak
+│   ├── style.css
+│   └── themes/
+│       └── mocha.css
+│
 ├── rofi/
+│   ├── config.rasi
+│   ├── catppuccin-default.rasi
+│   └── themes/
+│       └── catppuccin-mocha.rasi
+│
 ├── kitty/
+│   ├── kitty.conf
+│   └── mocha.conf
+│
 ├── local-bin/
-├── wallpapers/
-├── packages/
-│   └── manual-packages.txt
-└── restore.sh
+│   ├── catppuccin-menu
+│   ├── catppuccin-switch
+│   └── screenshot-tool
+│
+└── README.md
 ```
 
-Some folders and files may not exist yet. Add them as they are backed up.
-
----
-
-## 3. Required Packages
-
-### Core desktop
-
-```bash
-sudo apt install \
-    git \
-    kitty \
-    thunar \
-    rofi \
-    waybar \
-    swaybg \
-    grim \
-    slurp \
-    jq \
-    wl-clipboard \
-    libnotify-bin \
-    pavucontrol \
-    network-manager-gnome \
-    brightnessctl \
-    gnome-calendar
-```
-
-### Input method
-
-```bash
-sudo apt install fcitx5
-```
-
-Install and configure the Bamboo input method separately if it is not available in the current package repositories.
-
-### Fonts
-
-- JetBrainsMono Nerd Font
-- Symbols Nerd Font
-
-Check installed fonts:
-
-```bash
-fc-list | grep -Ei 'JetBrains|Nerd'
-```
+## Features
 
 ### Hyprland
 
-Install Hyprland using a trusted installation source appropriate for the target Linux distribution.
-
-Check:
-
-```bash
-hyprctl version
-```
-
----
-
-## 4. Configuration Backup Checklist
-
-### Hyprland
-
-- [ ] `~/.config/hypr/hyprland.lua`
-- [ ] `~/.config/hypr/themes/`
-- [ ] Check keybindings
-- [ ] Check monitor configuration
-- [ ] Check startup commands
-- [ ] Check Lua configuration dependencies
+- Lua-based configuration.
+- Keyboard shortcuts for window management.
+- Window floating and maximize controls.
+- Workspace navigation.
+- Custom startup applications.
+- GNOME/GDM remains available.
 
 ### Waybar
 
-- [ ] `~/.config/waybar/config.jsonc`
-- [ ] `~/.config/waybar/style.css`
-- [ ] `~/.config/waybar/themes/`
-- [ ] Check workspace module
-- [ ] Check clock
-- [ ] Check network
-- [ ] Check audio
-- [ ] Check brightness
-- [ ] Check battery
-- [ ] Check CPU and memory
-- [ ] Check system tray
+- Workspace and active-window information.
+- Clock and calendar launcher.
+- Network status and NetworkManager settings.
+- Volume control and Pavucontrol.
+- CPU, memory, battery and brightness modules.
+- Catppuccin styling.
+
+Mouse actions:
+
+| Module | Left click | Right click |
+|---|---|---|
+| Network | Open Network Settings | Close Network Settings |
+| Volume | Open Pavucontrol | Close Pavucontrol |
+| Clock | Open GNOME Calendar | Close GNOME Calendar |
+
+### Wallpaper – Hyprpaper
+
+Hyprpaper handles wallpaper rotation.
+
+Configuration: `hypr/hyprpaper.conf`
+
+- Wallpaper directory: `~/Pictures/Wallpapers`
+- Monitor: `eDP-1`
+- Fit mode: `cover`
+- Rotation interval: 180 seconds
+- Order: random
+
+The old Bash slideshow and swaybg-based wallpaper setup have been retired.
 
 ### Rofi
 
-- [ ] `~/.config/rofi/`
-- [ ] Catppuccin theme
-- [ ] Application launcher (`drun`)
-- [ ] Command launcher (`run`)
-- [ ] Check keyboard shortcuts
+- `Super + R`: Application launcher.
+- `Super + Shift + R`: Command runner.
 
-### Kitty
-
-- [ ] `~/.config/kitty/`
-- [ ] Theme configuration
-- [ ] Font configuration
-- [ ] Terminal appearance
-
-### Scripts
-
-- [ ] `~/.local/bin/catppuccin-switch`
-- [ ] `~/.local/bin/catppuccin-menu`
-- [ ] `~/.local/bin/screenshot-tool`
-- [ ] `~/.local/bin/wallpaper-slideshow`
-
-Check executable permissions after restoring:
-
-```bash
-chmod +x ~/.local/bin/*
-```
-
----
-
-## 5. Catppuccin Theme
+### Catppuccin
 
 Supported flavors:
 
@@ -168,68 +118,72 @@ Supported flavors:
 - Macchiato
 - Mocha
 
-Accent color: Mauve.
+Switch themes using:
 
-Check:
+```bash
+catppuccin-menu
+```
 
-- [ ] Hyprland colors
-- [ ] Waybar colors
-- [ ] Rofi colors
-- [ ] Kitty colors
-- [ ] GTK theme
-- [ ] Papirus folder colors
-- [ ] Theme switching script
-
-Switch theme:
+Or directly:
 
 ```bash
 catppuccin-switch mocha
 ```
 
-Replace `mocha` with `latte`, `frappe`, or `macchiato` as needed.
+### Screenshot Tool
 
----
+The screenshot helper supports:
 
-## 6. Wallpaper
+- Print: Capture focused monitor.
+- Super + Print: Select a region.
+- Shift + Print: Capture active window.
 
-Wallpaper directory:
+Screenshots are saved under:
 
 ```text
-~/Pictures/Wallpapers/
+~/Pictures/Screenshots
 ```
 
-Check:
+## Requirements
 
-- [ ] Wallpaper images backed up
-- [ ] Wallpaper slideshow script restored
-- [ ] swaybg installed
-- [ ] Slideshow starts automatically in Hyprland
-- [ ] Wallpaper changes every 180 seconds
-- [ ] GNOME wallpaper still works independently
+Install the applications and utilities required by your configuration.
 
----
+Example Ubuntu package installation:
 
-## 7. GNOME and GDM
+```bash
+sudo apt update
 
-These components should remain functional.
+sudo apt install \
+    git \
+    kitty \
+    thunar \
+    waybar \
+    rofi \
+    hyprpaper \
+    grim \
+    slurp \
+    jq \
+    wl-clipboard \
+    libnotify-bin \
+    pavucontrol \
+    network-manager-gnome \
+    gnome-calendar \
+    papirus-icon-theme \
+    papirus-folders \
+    fcitx5 \
+    fcitx5-bamboo
+```
 
-- [ ] GDM starts normally
-- [ ] GNOME session works
-- [ ] GNOME wallpaper works
-- [ ] GTK theme works
-- [ ] Icon theme works
-- [ ] GNOME Calendar works
+Hyprland itself must also be installed and working before restoring its configuration.
 
-Do not replace or disable GDM just to configure Hyprland.
+Some components, such as Catppuccin GTK themes and Nerd Fonts, may require separate installation.
 
----
-
-## 8. Restore Configuration
+## Restoring Dotfiles
 
 Clone the repository:
 
 ```bash
-git clone YOUR_REPOSITORY_URL ~/dotfiles
+git clone https://github.com/THT909/Hyperland-dotfile.git ~/dotfiles
 ```
 
 Back up existing configurations before restoring:
@@ -237,154 +191,76 @@ Back up existing configurations before restoring:
 ```bash
 mkdir -p ~/config-backup
 
-cp -a ~/.config/hypr ~/config-backup/ 2>/dev/null || true
-cp -a ~/.config/waybar ~/config-backup/ 2>/dev/null || true
-cp -a ~/.config/rofi ~/config-backup/ 2>/dev/null || true
-cp -a ~/.config/kitty ~/config-backup/ 2>/dev/null || true
+cp -a ~/.config/hypr ~/config-backup/ 2>/dev/null
+cp -a ~/.config/waybar ~/config-backup/ 2>/dev/null
+cp -a ~/.config/rofi ~/config-backup/ 2>/dev/null
+cp -a ~/.config/kitty ~/config-backup/ 2>/dev/null
 ```
 
 Restore configurations:
 
 ```bash
+mkdir -p ~/.config
+
 cp -a ~/dotfiles/hypr ~/.config/
 cp -a ~/dotfiles/waybar ~/.config/
 cp -a ~/dotfiles/rofi ~/.config/
 cp -a ~/dotfiles/kitty ~/.config/
 ```
 
-Restore scripts:
+Restore helper scripts:
 
 ```bash
 mkdir -p ~/.local/bin
+
 cp -a ~/dotfiles/local-bin/. ~/.local/bin/
 chmod +x ~/.local/bin/*
 ```
 
-Restore wallpapers if backed up:
+Make sure the wallpaper directory exists:
 
 ```bash
 mkdir -p ~/Pictures/Wallpapers
-cp -a ~/dotfiles/wallpapers/. ~/Pictures/Wallpapers/
 ```
 
-Review paths before running commands if your repository structure differs.
+Copy your wallpaper images into that directory separately. Wallpaper images are not stored in this repository.
 
----
+## After Restoring
 
-## 9. Post-Installation Verification
+1. Verify Hyprland configuration.
+2. Verify Hyprpaper configuration and wallpaper directory.
+3. Verify Waybar modules and click actions.
+4. Verify Rofi keyboard shortcuts.
+5. Verify Kitty theme.
+6. Verify helper scripts.
+7. Test GNOME and GDM remain available.
 
-### Hyprland
+Reload Hyprland configuration:
 
 ```bash
-hyprctl version
-hyprctl monitors
 hyprctl reload
 ```
 
-- [ ] Hyprland starts
-- [ ] Keyboard shortcuts work
-- [ ] Floating works (`SUPER + V`)
-- [ ] Fullscreen works (`SUPER + F`)
-- [ ] Terminal opens (`SUPER + Q`)
-- [ ] File manager opens (`SUPER + E`)
+## Updating Dotfiles
 
-### Waybar
-
-```bash
-pgrep -a waybar
-```
-
-If Waybar is not running:
-
-```bash
-waybar -c ~/.config/waybar/config.jsonc \
-       -s ~/.config/waybar/style.css &
-```
-
-- [ ] Bar appears
-- [ ] Clock works
-- [ ] Network works
-- [ ] Audio controls work
-- [ ] Battery works
-- [ ] CPU and memory work
-- [ ] Tray works
-
-### Rofi
-
-- [ ] `SUPER + R` opens application launcher
-- [ ] `SUPER + SHIFT + R` opens command launcher
-- [ ] Catppuccin theme works
-
-### Wallpaper
-
-- [ ] swaybg works
-- [ ] Wallpaper loads
-- [ ] Slideshow works
-- [ ] Automatic startup works
-
-### GNOME
-
-- [ ] GDM login screen works
-- [ ] GNOME session starts
-- [ ] GNOME settings work
-
----
-
-## 10. Package Backup
-
-Save manually installed packages:
-
-```bash
-apt-mark showmanual > ~/manual-packages.txt
-```
-
-Restore package list on Ubuntu:
-
-```bash
-sudo apt update
-xargs -a ~/manual-packages.txt sudo apt install -y
-```
-
-Review the package list before restoring. Some packages may not exist on a newer Ubuntu release.
-
----
-
-## 11. Git Backup
-
-After changing configurations:
+After changing desktop configurations:
 
 ```bash
 cd ~/dotfiles
 
-git status
 git add .
 git commit -m "Update desktop configuration"
 git push
 ```
 
-Before publishing, check for passwords, API tokens, personal information and machine-specific files.
+## Notes
+
+- Keep GNOME and GDM working.
+- Do not replace GDM with another display manager.
+- Do not commit passwords, access tokens or other private information.
+- Keep personal wallpaper images backed up separately.
+- Review configuration changes before restoring them on another machine.
 
 ---
 
-## 12. Final Checklist
-
-- [ ] All configuration files backed up
-- [ ] All scripts backed up
-- [ ] Executable permissions preserved
-- [ ] Package list saved
-- [ ] Wallpapers backed up
-- [ ] Fonts documented
-- [ ] GTK and icon themes documented
-- [ ] Fcitx5 and Bamboo documented
-- [ ] GNOME and GDM verified
-- [ ] Restore instructions tested
-- [ ] GitHub repository updated
-
----
-
-**Project:** My Personal Linux Dotfiles  
-**Primary system:** Ubuntu 24.04 LTS  
-**Window manager:** Hyprland  
-**Theme:** Catppuccin Mocha + Mauve
-
-*This README is a living document. Update it whenever the desktop configuration changes.*
+Personal Linux desktop configuration. Built and maintained incrementally.

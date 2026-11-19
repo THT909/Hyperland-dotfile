@@ -48,7 +48,7 @@ local runMenu = "env PATH=/home/thanh/.local/bin:/usr/local/sbin:/usr/local/bin:
 hl.on("hyprland.start", function()
     hl.exec_cmd("fcitx5 -d")
     hl.exec_cmd("waybar -c ~/.config/waybar/config.jsonc -s ~/.config/waybar/style.css")
-    hl.exec_cmd("~/.local/bin/wallpaper-slideshow")
+    hl.exec_cmd("hyprpaper")
 end)
 -- See https://wiki.hypr.land/configuring/core/autostart/
 
